@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id              String   @id @default(uuid())
+  email           String   @unique
+  password        String
+  name            String
+  age             Int
+  location        String
+  interests       String   // Comma separated interests
+  energyLevel     Int      // 1-5
+  availability    String   // JSON or string representing availability
+  reputationScore Float    @default(5.0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  createdMissions Mission[]       @relation("CreatedMissions")
+  participations Participation[]
+  ratingsGiven    Rating[]        @relation("RatingsGiven")
+  ratingsReceived Rating[]        @relation("RatingsReceived")
+  messages        Message[]
+}
+
+model Mission {
+  id              String   @id @default(uuid())
+  title           String
+  category        String
+  description     String
+  location        String
+  datetime        DateTime
+  duration        Int      // in minutes
+  maxParticipants Int
+  energyLevel     Int      // 1-5
+  status          String   @default("OPEN") // OPEN, FULL, COMPLETED, CANCELLED
+  
+  creatorId       String
+  creator         User     @relation("CreatedMissions", fields: [creatorId], references: [id])
+  
+  participations  Participation[]
+  messages        Message[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Participation {
+  id        String   @id @default(uuid())
+  userId    String
+  missionId String
+  status    String   @default("JOINED") // JOINED, ATTENDED, CANCELLED
+  rating    Float?
+  
+  user      User     @relation(fields: [userId], references: [id])
+  mission   Mission  @relation(fields: [missionId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, missionId])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  userId    String
+  missionId String
+  
+  user      User     @relation(fields: [userId], references: [id])
+  mission   Mission  @relation(fields: [missionId], references: [id])
+  
+  createdAt DateTime @default(now())
+}
+
+model Rating {
+  id         String   @id @default(uuid())
+  fromUserId String
+  toUserId   String
+  missionId  String
+  score      Int      // 1-5
+  comment    String?
+  
+  fromUser   User     @relation("RatingsGiven", fields: [fromUserId], references: [id])
+  toUser     User     @relation("RatingsReceived", fields: [toUserId], references: [id])
+  
+  createdAt  DateTime @default(now())
+}
