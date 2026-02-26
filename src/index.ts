@@ -30,3 +30,5 @@ app.use('/ratings', ratingRoutes);
 app.listen(PORT, () => {
     console.log(`Kensei Social Backend running on http://localhost:${PORT}`);
 });
+
+export default app;
