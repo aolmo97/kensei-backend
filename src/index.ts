@@ -27,8 +27,10 @@ app.use('/missions', missionRoutes);
 app.use('/recommendations', matchingRoutes);
 app.use('/ratings', ratingRoutes);
 
-app.listen(PORT, () => {
-    console.log(`Kensei Social Backend running on http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Kensei Social Backend running on http://localhost:${PORT}`);
+    });
+}
 
 export default app;
