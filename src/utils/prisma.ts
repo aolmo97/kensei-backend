@@ -1,5 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+if (!process.env.DATABASE_URL) {
+    console.error('CRITICAL: DATABASE_URL is not defined in environment variables');
+}
+
+const prisma = new PrismaClient({
+    log: ['error', 'warn'],
+});
 
 export default prisma;

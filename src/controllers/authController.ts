@@ -21,11 +21,11 @@ export const register = async (req: Request, res: Response) => {
                 email,
                 password: hashedPassword,
                 name,
-                age: parseInt(age),
-                location,
-                interests,
-                energyLevel: parseInt(energyLevel),
-                availability,
+                age: age ? parseInt(age) : 0,
+                location: location || '',
+                interests: interests || '',
+                energyLevel: energyLevel ? parseInt(energyLevel) : 3,
+                availability: availability || '',
             },
         });
 
